@@ -8,11 +8,12 @@ package ca.sheridancollege.project;
 import java.util.ArrayList;
 
 /**
- * The class that models your game. You should create a more specific child of this class and instantiate the methods
- * given.
+ * The class that models your game. You should create a more specific child of
+ * this class and instantiate the methods given.
  *
  * @author dancye
- * @modified Paul Bonenfant Jan 2020
+ * @author Paul Bonenfant Jan 2020
+ * @author Marcin Koziel Apr 2020
  */
 public abstract class Game {
 
@@ -25,17 +26,14 @@ public abstract class Game {
     }
 
     /**
-     * @return the name
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
      * @return the players of this game
      */
     public ArrayList<Player> getPlayers() {
         return players;
+    }
+
+    public int getPlayerSize() {
+        return players.size();
     }
 
     /**
@@ -45,13 +43,29 @@ public abstract class Game {
         this.players = players;
     }
 
+    public String getPlayerNames() {
+        String names = "";
+        for (int i = 0; i < players.size(); i++) {
+            if (i == 0) {
+                names += String.format("%s", players.get(i).getName());
+            } else if (i > 0 && i != players.size()) {
+                names += String.format(", %s", players.get(i).getName());
+            } else {
+                names += String.format("and %s", players.get(i).getName());
+            }
+        }
+        return names;
+    }
+
     /**
-     * Play the game. This might be one method or many method calls depending on your game.
+     * Play the game. This might be one method or many method calls depending on
+     * your game.
      */
     public abstract void play();
 
     /**
-     * When the game is over, use this method to declare and display a winning player.
+     * When the game is over, use this method to declare and display a winning
+     * player.
      */
     public abstract void declareWinner();
 
