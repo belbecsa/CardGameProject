@@ -1,5 +1,6 @@
 /**
  * SYST 17796 Project Winter 2020 Deliverable
+ * @author WarDogs
  */
 package ca.sheridancollege.project;
 
@@ -44,5 +45,4 @@ public class WarCard extends Card {
     public String toString() {
         return String.format("%s of %s", getValue(), getSuit());
     }
-
 }

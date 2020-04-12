@@ -1,3 +1,7 @@
+/**
+ * SYST 17796 Project Winter 2020 Deliverable
+ * @author WarDogs
+ */
 package ca.sheridancollege.project;
 
 /**
@@ -31,19 +35,25 @@ public class WarGame extends Game {
 
     @Override
     public void play() {
-        String userInput; // String input from user prompt
+        // String input from user prompt
+        String userInput;
+
         // Settinging up game 
         initalizeMatch();
+
+        // Game Loop
         while (true) {
             switch (state) {
                 case MAIN_MENU:
                     // Main menu options printed
-                    System.out.printf("%n=====%nMenu:%n=====%n"
-                            + "1. Player Stats%n"
-                            + "2. Play War%n"
-                            + "3. Exit%n%n");
+                    System.out.printf(
+                        "%n=====%nMenu:%n=====%n"
+                        + "1. Player Stats%n"
+                        + "2. Play War%n"
+                        + "3. Exit%n%n");
 
                     userInput = sc.next();
+
                     // Main menu logic for user input
                     switch (userInput) {
                         case "1":
@@ -61,16 +71,24 @@ public class WarGame extends Game {
                             System.out.println("Please enter a valid input");
                     }
                     break;
+
                 case STAT_MENU:
                     // Stats for players printed
-                    System.out.printf("%nStats%n=====%n");
+                    System.out.print("%nStats%n=====%n");
+
                     for (PlayerProfile profile : profilecontainer.getPlayerList()) {
-                        System.out.printf("%nName: %s%nWins: %s%nLosses %s%n%n",
-                                profile.getName(), profile.getWins(), profile.getLosses());
+                        System.out.printf(
+                            "%nName: %s%nWins: %s%nLosses %s%n%n",
+                            profile.getName(),
+                            profile.getWins(),
+                            profile.getLosses());
                     }
+
                     // Stats logic for user input
-                    System.out.printf("=====%n"
-                            + "1. Go back%n");
+                    System.out.printf(
+                        "=====%n"
+                        + "1. Go back%n");
+
                     userInput = sc.next();
                     switch (userInput) {
                         case "1":
@@ -80,13 +98,16 @@ public class WarGame extends Game {
                             System.out.println("Please enter a valid input");
                     }
                     break;
+
                 case PLAYING_MATCH:
                     // Round of War is printed
                     pushToAllHands();
                     playRound();
-                    System.out.printf("%n=====%n"
-                            + "1. Main Menu%n"
-                            + "2. Continue playing%n");
+                    System.out.printf(
+                        "%n=====%n"
+                        + "1. Main Menu%n"
+                        + "2. Continue playing%n");
+
                     // End of round logic for user input
                     userInput = sc.next();
                     switch (userInput) {
@@ -100,6 +121,7 @@ public class WarGame extends Game {
                             System.out.println("Please enter a valid input");
                     }
                     break;
+
                 default:
                     break;
             }
@@ -109,7 +131,8 @@ public class WarGame extends Game {
     }
 
     /**
-     * Player will be declared eliminated from the WarGame Player ArrayList
+     * Player will be declared eliminated and removed from the WarGame Player
+     * ArrayList.
      *
      * @param player WarPlayer object to eliminate
      */
@@ -164,8 +187,9 @@ public class WarGame extends Game {
                 if (playerNo >= 2 && playerNo <= 4) {
                     isValid = true;
                 } else {
-                    System.out.printf("Invalid number of players. "
-                            + "Please re-enter the valid number of player(s): (2-4)%n");
+                    System.out.printf(
+                        "Invalid number of players. "
+                        + "Please re-enter the valid number of player(s): (2-4)%n");
                 }
             } catch (InputMismatchException ime) {
                 System.out.println(ime.getMessage());
@@ -262,7 +286,7 @@ public class WarGame extends Game {
                 tempValue = activePlayer.getHandValue();
             }
 
-            // Remove cards from hands of losers and put them into the pot (warPot)          
+            // Remove cards from hands of losers and put them into the pot (warPot)
             for (int i = 0; i < getPlayers().size(); i++) {
                 activePlayer = (WarPlayer) getPlayers().get(i);
                 if (activePlayer.getHandValue() != maxValue) {
@@ -305,27 +329,37 @@ public class WarGame extends Game {
     /**
      * Before a round is started, players are told to pick up one card for the
      * round
+     * Called at the start of a round
      */
     private void pushToAllHands() {
-        System.out.printf("%n[Round Start]%n"
-                + "Players %s ready? Place one card down!%n", getPlayerNames());
+        System.out.printf(
+            "%n[Round Start]%nPlayers %s ready? Place one card down!%n",
+            getPlayerNames());
+
         // Console prints players put down a card that is drawn (facedown)
         for (int i = 0; i < getPlayerSize(); i++) {
             activePlayer = (WarPlayer) getPlayers().get(i);
-            System.out.printf("\nPlayer %s has %s of cards in deck and puts down"
-                    + " a, %s.%n",
-                    activePlayer.getName(), activePlayer.getDeck().getSize(),
-                    activePlayer.getCurrentCard());
-            activePlayer.pushToHand();  // Push one card to hand from deck
+
+            System.out.printf(
+                "\nPlayer %s has %s of cards in deck and puts down a, %s.%n",
+                activePlayer.getName(), 
+                activePlayer.getDeck().getSize(),
+                activePlayer.getCurrentCard()
+            );
+
+            // Push one card to hand from deck
             // Printing the card that was used by player
+            activePlayer.pushToHand(); 
         }
     }
 
     /**
-     * User player stats are updated based on their hand status If they still
-     * have a card at the end of the round, they win, otherwise loss.
+     * WarPlayer stats are updated based on their hand status.
      *
-     * @param warPlayer WarPlayer object to update stat for
+     * If the warPlayer has a card at the end of the round, they win, otherwise
+     * they loss.
+     *
+     * @param warPlayer WarPlayer to update stat for
      */
     private void updatePlayerStats(WarPlayer warPlayer) {
         if (warPlayer.hasCards()) {
@@ -336,8 +370,8 @@ public class WarGame extends Game {
     }
 
     /**
-     * Player will the greatest number of cards within their deck will be
-     * subject to winner and wins a lamborghini...
+     * Player with the greatest number of cards within their deck is the winner
+     * and wins a Lamborghini...
      */
     @Override
     public void declareWinner() {

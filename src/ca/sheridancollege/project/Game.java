@@ -1,7 +1,6 @@
 /**
- * SYST 17796 Project Winter 2020 Base code.
- * Students can modify and extend to implement their game.
- * Add your name as a modifier and the date!
+ * SYST 17796 Project Winter 2020 Deliverable
+ * @author WarDogs
  */
 package ca.sheridancollege.project;
 
@@ -13,12 +12,12 @@ import java.util.ArrayList;
  *
  * @author dancye
  * @author Paul Bonenfant Jan 2020
- * @author Marcin Koziel Apr 2020
+ * @modifier Marcin Koziel Apr 2020
  */
 public abstract class Game {
 
-    private final String name;//the title of the game
-    private ArrayList<Player> players;// the players of the game
+    private final String name;  //the title of the game
+    private ArrayList<Player> players;  // the players of the game
 
     public Game(String name) {
         this.name = name;
@@ -26,23 +25,30 @@ public abstract class Game {
     }
 
     /**
-     * @return the players of this game
+     * @return the players of this game.
      */
     public ArrayList<Player> getPlayers() {
         return players;
     }
 
+    /**
+     * @return the number of player in the game.
+     */
     public int getPlayerSize() {
         return players.size();
     }
 
     /**
-     * @param players the players of this game
+     * @param players the players of this game.
      */
     public void setPlayers(ArrayList<Player> players) {
         this.players = players;
     }
 
+
+    /**
+     * @return a String stating the names of each player.
+     */
     public String getPlayerNames() {
         String names = "";
         for (int i = 0; i < players.size(); i++) {
@@ -58,14 +64,12 @@ public abstract class Game {
     }
 
     /**
-     * Play the game. This might be one method or many method calls depending on
-     * your game.
+     * Play the game.
      */
     public abstract void play();
 
     /**
-     * When the game is over, use this method to declare and display a winning
-     * player.
+     * Declare and display a winning player.
      */
     public abstract void declareWinner();
 

@@ -1,7 +1,6 @@
 /**
- * SYST 17796 Project Winter 2020 Base code.
- * Students can modify and extend to implement their game.
- * Add your name as a modifier and the date!
+ * SYST 17796 Project Winter 2020 Deliverable
+ * @author WarDogs
  */
 package ca.sheridancollege.project;
 
@@ -9,13 +8,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 /**
- * A concrete class that represents any grouping of cards for a Game. HINT, you
- * might want to subclass this more than once. The group of cards has a maximum
- * size attribute which is flexible for reuse.
+ * A class that represents any grouping of cards for Game.
  *
  * @author dancye
  * @author Paul Bonenfant Jan 2020
- * @author Marcin Koziel Apr 2020
+ * @modifier Marcin Koziel Apr 2020
  */
 public class GroupOfCards {
 
@@ -23,7 +20,6 @@ public class GroupOfCards {
     private ArrayList<Card> cards;
 
     public GroupOfCards() {
-
         this.cards = new ArrayList();
     }
 

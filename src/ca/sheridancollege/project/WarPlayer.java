@@ -1,5 +1,6 @@
 /**
-* SYST 17796 Project Winter 2020 Deliverable
+ * SYST 17796 Project Winter 2020 Deliverable
+ * @author WarDogs
  */
 package ca.sheridancollege.project;
 

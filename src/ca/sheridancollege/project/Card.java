@@ -1,7 +1,6 @@
 /**
- * SYST 17796 Project Winter 2020 Base code.
- * Students can modify and extend to implement their game.
- * Add your name as a modifier and the date!
+ * SYST 17796 Project Winter 2020 Deliverable
+ * @author WarDogs
  */
 package ca.sheridancollege.project;
 
@@ -11,16 +10,9 @@ package ca.sheridancollege.project;
  * code should remember to add themselves as a modifier.
  *
  * @author dancye
+ * @modifier Marcin Koziel Apr 2020
  */
 public abstract class Card {
-    //default modifier for child classes
-
-    /**
-     * Students should implement this method for their specific children classes
-     *
-     * @return a String representation of a card. Could be an UNO card, a
-     * regular playing card etc.
-     */
     private String suit;
     private int value;
 
@@ -37,6 +29,13 @@ public abstract class Card {
         return value;
     }
 
+
+    /**
+     * Students should implement this method for their specific children classes
+     *
+     * @return a String representation of a card. Could be an UNO card, a
+     * regular playing card etc.
+     */
     @Override
     public abstract String toString();
 
