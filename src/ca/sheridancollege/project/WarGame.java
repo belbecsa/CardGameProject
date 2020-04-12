@@ -40,6 +40,9 @@ public class WarGame extends Game {
         // String input from user prompt
         String userInput;
 
+        printLogo();
+        System.out.println("Welcome to WarDogs. Let's get started!\n");
+
         // Settinging up game 
         initializeMatch();
 
@@ -387,5 +390,25 @@ public class WarGame extends Game {
                 winner, maxCards);
         System.exit(0);
 
+    }
+
+
+    private void printLogo() {
+        String[] lines = {
+            " _    _           ______                ",
+            "| |  | |          |  _  \\               ",
+            "| |  | | __ _ _ __| | | |___   __ _ ___ ",
+            "| |/\\| |/ _` | '__| | | / _ \\ / _` / __|",
+            "\\  /\\  / (_| | |  | |/ / (_) | (_| \\__ \\",
+            " \\/  \\/ \\__,_|_|  |___/ \\___/ \\__, |___/",
+            "                               __/ |    \n" +
+            "                              |___/     "};
+
+        for (String line : lines) {
+            System.out.println(line);
+            try {
+                Thread.sleep(250);
+            } catch (InterruptedException ex) { /* do nothing, no need */ }
+        }
     }
 }
