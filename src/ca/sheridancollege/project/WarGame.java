@@ -157,15 +157,17 @@ public class WarGame extends Game {
         do {
             System.out.printf("Please enter the number of players: (2-4)%n> ");
 
+            // necessary to have buffer in case player enters a String or null
+            String buffer = scan.next();
             try {
-                playerCount = scan.nextInt();
-
-                if (playerCount > 4 || playerCount < 2)
-                    System.out.println("Invalid number of players!");
-
-            } catch (InputMismatchException ime) {
-                System.out.println(ime.getMessage());
+                playerCount = Integer.parseInt(buffer);
+            } catch(NumberFormatException e) {
+                playerCount = 0;
             }
+
+            if (playerCount > 4 || playerCount < 2)
+                System.out.println("Invalid number of players!");
+
         } while (playerCount > 4 || playerCount < 2);
 
         // Get user to enter WarPlayer names and add WarPlayers to game
