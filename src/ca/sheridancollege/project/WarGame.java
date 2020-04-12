@@ -114,7 +114,7 @@ public class WarGame extends Game {
      * @param player WarPlayer object to eliminate
      */
     private void eliminatePlayer(WarPlayer player) {
-        System.out.printf("Player %s has been eliminated.",
+        System.out.printf("Player %s has been eliminated.%n",
                 player.getName());
         getPlayers().remove(player);
     }
@@ -230,14 +230,14 @@ public class WarGame extends Game {
             // If War is declared between players, players with existing cards
             // in hands will pick up another card
             if (warValue > 0) {
-                System.out.printf("%nPlayers %s are going to war!", getPlayerNames());
+                System.out.printf("%nPlayers are going to war!%n");
                 for (int i = 0; i < getPlayerSize(); i++) {
                     warValue = 0;  // Reset
                     maxValue = 0;  // Reset
                     activePlayer = (WarPlayer) getPlayers().get(i);
                     if (activePlayer.hasCards() && activePlayer.getDeck().getSize() > 0) {
                         activePlayer.pushToHand();  // Push one card from deck to hand
-                    } else {
+                    } else if (activePlayer.getDeck().getSize() == 0) {
                         // Eliminate player if got to war and no more cards are left in deck
                         eliminatePlayer(activePlayer);
                     }
