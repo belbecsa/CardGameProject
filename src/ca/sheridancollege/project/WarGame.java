@@ -16,13 +16,15 @@ import java.util.Scanner;
  * keep logs of their wins and losses for the number of players playing. (2-4)
  *
  * @author Marcin Koziel
+ * @modifier Sheldon Allen
  */
 public class WarGame extends Game {
 
+    private final ProfileContainer profileContainer = new ProfileContainer();
+    private final Scanner scan = new Scanner(System.in);
+
     private WarPlayer activePlayer;
     private GameState state = GameState.MAIN_MENU;
-    private ProfileContainer profilecontainer = new ProfileContainer();
-    private Scanner sc = new Scanner(System.in);
 
     public WarGame(String name) {
         super(name);
@@ -39,7 +41,7 @@ public class WarGame extends Game {
         String userInput;
 
         // Settinging up game 
-        initalizeMatch();
+        initializeMatch();
 
         // Game Loop
         while (true) {
@@ -52,7 +54,7 @@ public class WarGame extends Game {
                         + "2. Play War%n"
                         + "3. Exit%n%n");
 
-                    userInput = sc.next();
+                    userInput = scan.next();
 
                     // Main menu logic for user input
                     switch (userInput) {
@@ -76,7 +78,7 @@ public class WarGame extends Game {
                     // Stats for players printed
                     System.out.print("%nStats%n=====%n");
 
-                    for (PlayerProfile profile : profilecontainer.getPlayerList()) {
+                    for (PlayerProfile profile : profileContainer.getPlayerList()) {
                         System.out.printf(
                             "%nName: %s%nWins: %s%nLosses %s%n%n",
                             profile.getName(),
@@ -89,7 +91,7 @@ public class WarGame extends Game {
                         "=====%n"
                         + "1. Go back%n");
 
-                    userInput = sc.next();
+                    userInput = scan.next();
                     switch (userInput) {
                         case "1":
                             state = GameState.MAIN_MENU;
@@ -109,7 +111,7 @@ public class WarGame extends Game {
                         + "2. Continue playing%n");
 
                     // End of round logic for user input
-                    userInput = sc.next();
+                    userInput = scan.next();
                     switch (userInput) {
                         case "1":
                             state = GameState.MAIN_MENU;
@@ -149,93 +151,82 @@ public class WarGame extends Game {
      * @throws InputMismatchException Based on user input, exception will be
      * thrown.
      */
-    private void initalizeMatch() throws InputMismatchException {
-        GroupOfCards warDeck = new GroupOfCards();
-        Card warCard;
-        String playerName; // inputVariable for names
-        int playerNo = 0;
-        boolean isValid = false; // For validating users
-
-        // Creating a deck for dealer later to be used as pot (warPot)
-        for (int j = 0; j < 4; j++) { // Number of suits
-            // Added 2 to k because it adjustes the values to match the card
-            for (int k = 2; k < 15; k++) { // Number of ranks (values)
-                switch (j) {
-                    case 0:
-                        warCard = new WarCard("Clubs", k);
-                        break;
-                    case 1:
-                        warCard = new WarCard("Spades", k);
-                        break;
-                    case 2:
-                        warCard = new WarCard("Diamonds", k);
-                        break;
-                    default:
-                        warCard = new WarCard("Hearts", k);
-                        break;
-                }
-                warDeck.getCards().add(warCard);
-            }
-        }
-        warDeck.shuffle();  // Shuffled for randomness between player rounds
-
-        // Number of players requested to be input
-        System.out.printf("Please enter the number of player(s): (2-4)%n");
+    private void initializeMatch() throws InputMismatchException {
+        // Request number of players from user between 2 and 4.
+        int playerCount;
         do {
+            System.out.printf("Please enter the number of players: (2-4)%n> ");
+
             try {
-                playerNo = sc.nextInt();
-                if (playerNo >= 2 && playerNo <= 4) {
-                    isValid = true;
-                } else {
-                    System.out.printf(
-                        "Invalid number of players. "
-                        + "Please re-enter the valid number of player(s): (2-4)%n");
-                }
+                playerCount = scan.nextInt();
+
+                if (playerCount > 4 || playerCount < 2)
+                    System.out.println("Invalid number of players!");
+
             } catch (InputMismatchException ime) {
                 System.out.println(ime.getMessage());
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
             }
-        } while (!isValid);
+        } while (playerCount > 4 || playerCount < 2);
 
-        // Names for number of players requested to be input
-        for (int i = 0; i < playerNo; i++) {
-            System.out.printf("Please enter the name of player #%s%n", i + 1);
-            isValid = false;
-            do {
-                playerName = sc.next();
-                if (profilecontainer.validatePlayerName(playerName)) {
-                    profilecontainer.createPlayerProfile(playerName);
-                    activePlayer = new WarPlayer(playerName);
-                    getPlayers().add(activePlayer);
-                    isValid = true;
-                } else {
-                    System.out.printf("Please re-enter the valid name of player #%s%n", i + 1);
+        // Get user to enter WarPlayer names and add WarPlayers to game
+        String playerName;
+        for (int i = 0; i < playerCount; i++) {
+
+            playerName = null;
+
+            // Remain locked in this loop until player enters valid player name.
+            while (playerName == null) {
+                System.out.printf("Please enter the name of Player #%s%n> ", i + 1);
+
+                playerName = scan.next();
+
+                if (!profileContainer.validatePlayerName(playerName)) {
+                    System.out.println(
+                        "Invalid! "
+                        + "Name must be unique and between 3 and 14 chars.");
+                    playerName = null;
                 }
-            } while (!isValid);
-        }
-        // Dealing cards to players from warDeck until no cards are left
-        do {
-            for (int i = 0; i < getPlayerSize(); i++) {
-                activePlayer = (WarPlayer) getPlayers().get(i);
-                activePlayer.pushToDeck(warDeck.getCards().remove(0));
             }
-        } while (warDeck.getSize() - (warDeck.getSize() % getPlayerSize()) != 0);
-        // Discarding any cards if need for even split between players
-        for (int i = 0; i < warDeck.getSize(); i++) {
-            warDeck.getCards().remove(i);
+
+            // Create PlayerProfile and add Player to game using playerName
+            profileContainer.createPlayerProfile(playerName);
+            getPlayers().add(new WarPlayer(playerName));
+        }
+
+        // Create deck
+        GroupOfCards warDeck = new GroupOfCards();
+        String[] suits = {"Clubs", "Spades", "Diamonds", "Hearts"};
+        for (String suit : suits) {
+            // Added 2 to value because it adjusts the values to match the card
+            for (int value = 2; value < 15; value++) {
+                warDeck.getCards().add(
+                    new WarCard(suit, value));
+            }
+        }
+        warDeck.shuffle();
+
+        // Split deck and administer cards to players.
+        WarPlayer warPlayer;
+        int cardsPerPlayer = (int) Math.floor(warDeck.getSize() / playerCount);
+
+        for (Player player : getPlayers()) {
+            warPlayer = (WarPlayer) player;
+            for (int c = 0; c < cardsPerPlayer; c++) {
+                warPlayer.pushToDeck(warDeck.getCards().remove(0));
+            }
         }
 
         // Shuffling deck console message (Visual aspect)
         try {
-            System.out.printf("%n%nShuffling deck...");
+            System.out.printf("%n%nShuffling deck...%n");
 
             for (int i = 3; i > 0; i--) {
-                System.out.printf("%s...", i);
+                System.out.println(i + "...");
                 Thread.sleep(1000);
             }
             System.out.printf("%n%n");
-        } catch (Exception e) {
+
+        } catch (InterruptedException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -363,9 +354,9 @@ public class WarGame extends Game {
      */
     private void updatePlayerStats(WarPlayer warPlayer) {
         if (warPlayer.hasCards()) {
-            profilecontainer.getPlayerProfile(warPlayer.getName()).addWin();
+            profileContainer.getPlayerProfile(warPlayer.getName()).addWin();
         } else {
-            profilecontainer.getPlayerProfile(warPlayer.getName()).addLoss();
+            profileContainer.getPlayerProfile(warPlayer.getName()).addLoss();
         }
     }
 
