@@ -153,7 +153,7 @@ public class WarGame extends Game {
      */
     private void initializeMatch() throws InputMismatchException {
         // Request number of players from user between 2 and 4.
-        int playerCount;
+        int playerCount = 0;
         do {
             System.out.printf("Please enter the number of players: (2-4)%n> ");
 
