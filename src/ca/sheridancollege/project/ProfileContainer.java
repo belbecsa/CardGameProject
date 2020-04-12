@@ -9,6 +9,7 @@ import java.util.ArrayList;
 /**
  *
  * @author Marcin Koziel
+ * @modifier Sheldon Allen
  */
 public class ProfileContainer {
 
@@ -41,10 +42,18 @@ public class ProfileContainer {
         }
     }
 
-    public boolean validatePlayerName(String name) {
-        if (name.length() > 0 || name.length() < 15) {
-            return true;
+    /**
+     * Validate that the pendingName is between 0 and 14 characters and that
+     * it is not in use by any existing PlayerProfiles.
+     *
+     * @param pendingName the name to be validated
+     */
+    public boolean validatePlayerName(String pendingName) {
+        for (PlayerProfile profile : playerProfiles) {
+            if (profile.getName().equals(pendingName))
+                return false;
         }
-        return false;
+
+        return pendingName.length() > 2 && pendingName.length() < 15;
     }
 }
