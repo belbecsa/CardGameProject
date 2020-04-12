@@ -4,9 +4,7 @@
  */
 package ca.sheridancollege.project;
 
-/**
- * SYST 17796 Project Winter 2020 Deliverable
- */
+import java.io.IOException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -37,35 +35,39 @@ public class WarGame extends Game {
 
     @Override
     public void play() {
-        // String input from user prompt
-        String userInput;
-
+        // Starting message
         printLogo();
         System.out.println("Welcome to WarDogs. Let's get started!\n");
 
-        // Settinging up game 
+        // Setup game
         initializeMatch();
+
+        // String input from user prompt
+        String userInput;
 
         // Game Loop
         while (true) {
+
             switch (state) {
+
                 case MAIN_MENU:
                     // Main menu options printed
+                    printLogo();
                     System.out.printf(
-                        "%n=====%nMenu:%n=====%n"
-                        + "1. Player Stats%n"
-                        + "2. Play War%n"
-                        + "3. Exit%n%n");
+                        "%n=============%n# MAIN MENU #%n=============%n"
+                        + "\t[1] Play Match%n"
+                        + "\t[2] View Stats%n"
+                        + "\t[3] Exit%n%n> ");
 
                     userInput = scan.next();
 
                     // Main menu logic for user input
                     switch (userInput) {
                         case "1":
-                            state = GameState.STAT_MENU;
+                            state = GameState.PLAYING_MATCH;
                             break;
                         case "2":
-                            state = GameState.PLAYING_MATCH;
+                            state = GameState.STAT_MENU;
                             break;
                         case "3":
                             declareWinner();
@@ -73,54 +75,57 @@ public class WarGame extends Game {
                             System.exit(0);
                             break;
                         default:
-                            System.out.println("Please enter a valid input");
+                            System.out.printf(
+                                "\"%s\" is not a valid input", userInput);
                     }
                     break;
 
                 case STAT_MENU:
                     // Stats for players printed
-                    System.out.print("%nStats%n=====%n");
+                    System.out.printf(
+                        "%n==============%n# VIEW STATS #%n==============%n");
 
                     for (PlayerProfile profile : profileContainer.getPlayerList()) {
                         System.out.printf(
-                            "%nName: %s%nWins: %s%nLosses %s%n%n",
+                            "%n  Name: %s%n\tWins: %s%n\tLosses %s%n%n",
                             profile.getName(),
                             profile.getWins(),
                             profile.getLosses());
                     }
 
+                    pause(250);
+
                     // Stats logic for user input
                     System.out.printf(
-                        "=====%n"
-                        + "1. Go back%n");
+                        "==============%nPress [ENTER] to return to MAIN MENU%n");
 
-                    userInput = scan.next();
-                    switch (userInput) {
-                        case "1":
-                            state = GameState.MAIN_MENU;
-                            break;
-                        default:
-                            System.out.println("Please enter a valid input");
-                    }
+                    // Wait for user to press ENTER key before continueing
+                    try {
+                        System.in.read();
+                    } catch (IOException e) { }
+
+                    state = GameState.MAIN_MENU;
+
                     break;
 
                 case PLAYING_MATCH:
                     // Round of War is printed
-                    pushToAllHands();
-                    playRound();
                     System.out.printf(
-                        "%n=====%n"
-                        + "1. Main Menu%n"
-                        + "2. Continue playing%n");
+                        "%n==========%n#  PLAY  #%n==========%n"
+                        + "\t[1] Play Round%n"
+                        + "\t[2] Return to MAIN MENU%n> ");
 
                     // End of round logic for user input
                     userInput = scan.next();
+
                     switch (userInput) {
                         case "1":
-                            state = GameState.MAIN_MENU;
+                            pushToAllHands();
+                            playRound();
+                            pause(300);
                             break;
                         case "2":
-                            state = GameState.PLAYING_MATCH;
+                            state = GameState.MAIN_MENU;
                             break;
                         default:
                             System.out.println("Please enter a valid input");
@@ -392,7 +397,9 @@ public class WarGame extends Game {
 
     }
 
-
+    /**
+     * Print the WarDogs logo in ASCII art.
+     */
     private void printLogo() {
         String[] lines = {
             " _    _           ______                ",
@@ -406,9 +413,17 @@ public class WarGame extends Game {
 
         for (String line : lines) {
             System.out.println(line);
-            try {
-                Thread.sleep(250);
-            } catch (InterruptedException ex) { /* do nothing, no need */ }
+            pause(150);
         }
+    }
+
+    /**
+     * A convenience function to simulate a pause... for dramatic effect.
+     * @param milli time in milliseconds to pause for.
+     */
+    private void pause(int milli) {
+        try {
+            Thread.sleep(milli);
+        } catch (InterruptedException ex) { /* do nothing, no need */ }
     }
 }
