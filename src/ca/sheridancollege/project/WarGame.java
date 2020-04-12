@@ -1,7 +1,7 @@
 package ca.sheridancollege.project;
 
 /**
- * SYST 17796 Project Winter 2020 Base code.
+ * SYST 17796 Project Winter 2020 Deliverable
  */
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -230,13 +230,19 @@ public class WarGame extends Game {
             // If War is declared between players, players with existing cards
             // in hands will pick up another card
             if (warValue > 0) {
-                System.out.printf("%nPlayers are going to war!%n");
+                System.out.printf("%n[WAR]%n"
+                        + "Players are going to war!%n");
                 for (int i = 0; i < getPlayerSize(); i++) {
                     warValue = 0;  // Reset
                     maxValue = 0;  // Reset
                     activePlayer = (WarPlayer) getPlayers().get(i);
                     if (activePlayer.hasCards() && activePlayer.getDeck().getSize() > 0) {
-                        activePlayer.pushToHand();  // Push one card from deck to hand
+                        activePlayer.pushToHand();
+                        System.out.printf("\nPlayer %s has %s of cards in deck "
+                                + "and puts down another card, %s.%n",
+                                activePlayer.getName(), activePlayer.getDeck().getSize(),
+                                activePlayer.getCurrentCard());
+                        // Push one card from deck to hand
                     } else if (activePlayer.getDeck().getSize() == 0) {
                         // Eliminate player if got to war and no more cards are left in deck
                         eliminatePlayer(activePlayer);
@@ -273,8 +279,10 @@ public class WarGame extends Game {
             activePlayer = (WarPlayer) getPlayers().get(i);
             updatePlayerStats(activePlayer);  // After a round stats are updated
             if (activePlayer.hasCards()) {
-                System.out.printf("\nPlayer %s is the winner and takes the pot!%n",
-                        activePlayer.getName());
+                System.out.printf("\n[Winner]%n"
+                        + "Player %s is declared the winner and takes the pot "
+                        + "of %s cards!%n",
+                        activePlayer.getName(), warPot.getSize());
                 //for each card in the pot do this
                 activePlayer.pushAllToHand(warPot.getCards());
                 activePlayer.pushHandToDeck();
@@ -299,15 +307,17 @@ public class WarGame extends Game {
      * round
      */
     private void pushToAllHands() {
-        System.out.printf("%nPlayers %s ready? Place one card down!%n", getPlayerNames());
+        System.out.printf("%n[Round Start]%n"
+                + "Players %s ready? Place one card down!%n", getPlayerNames());
         // Console prints players put down a card that is drawn (facedown)
         for (int i = 0; i < getPlayerSize(); i++) {
             activePlayer = (WarPlayer) getPlayers().get(i);
-            System.out.printf("\nPlayer %s has %s of cards in deck and puts down a card. ",
-                    activePlayer.getName(), activePlayer.getDeck().getSize());
+            System.out.printf("\nPlayer %s has %s of cards in deck and puts down"
+                    + " a, %s.%n",
+                    activePlayer.getName(), activePlayer.getDeck().getSize(),
+                    activePlayer.getCurrentCard());
             activePlayer.pushToHand();  // Push one card to hand from deck
             // Printing the card that was used by player
-            System.out.println(activePlayer.getHand().getCards().toString());
         }
     }
 
@@ -345,7 +355,8 @@ public class WarGame extends Game {
             }
         }
 
-        System.out.printf("Player %s is the winner with a total of %s cards!%n",
+        System.out.printf("[Winner]"
+                + "Player %s is the winner with a total of %s cards!%n",
                 winner, maxCards);
         System.exit(0);
 

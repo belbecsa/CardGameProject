@@ -1,5 +1,5 @@
 /**
- * SYST 17796 Project Winter 2020 Base code.
+ * SYST 17796 Project Winter 2020 Deliverable
  */
 package ca.sheridancollege.project;
 
