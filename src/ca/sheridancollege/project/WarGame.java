@@ -345,7 +345,7 @@ public class WarGame extends Game {
                 eliminatePlayer(loser);
         }
         winner.returnHandToDeck();
-        winner.shuffle();
+        winner.getDeck().shuffle();
 
         System.out.printf("%n%s has WON the round!%nPress [ENTER] to continue", winner);
 
