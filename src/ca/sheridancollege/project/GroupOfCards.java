@@ -43,4 +43,18 @@ public class GroupOfCards {
         return cards.size();
     }
 
+    /**
+     * Pops one card from the top of the group
+     */
+    public Card pop() {
+        return cards.remove(0);
+    }
+
+    /**
+     * Push one Card to the back of the group
+     */
+    public void push(Card c) {
+        cards.add(c);
+    }
+
 }//end class
