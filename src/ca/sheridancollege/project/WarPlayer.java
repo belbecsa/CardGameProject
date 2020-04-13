@@ -56,11 +56,6 @@ public class WarPlayer extends Player {
         return c;
     }
 
-    public boolean hasCards() {
-        if (hand.getSize() > 0) {
-            return true;
-        }
-        return false;
     /**
      * @return whether or not the WarPlayer has any cards in deck.
      */
@@ -75,8 +70,6 @@ public class WarPlayer extends Player {
         return hand.getSize() > 0;
     }
 
-    public void pushToDeck(Card card) {
-        deck.getCards().add(card);
     /**
      * Moves all Cards in hand back to the deck.
      */

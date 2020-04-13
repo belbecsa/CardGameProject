@@ -22,7 +22,6 @@ public class WarGame extends Game {
     private final ProfileContainer profileContainer = new ProfileContainer();
     private final Scanner scan = new Scanner(System.in);
 
-    private WarPlayer activePlayer;
     private GameState state = GameState.MAIN_MENU;
 
     public WarGame(String name) {
@@ -149,7 +148,7 @@ public class WarGame extends Game {
      * @param player WarPlayer object to eliminate
      */
     private void eliminatePlayer(WarPlayer player) {
-        System.out.printf("Player %s has been eliminated.%n",
+        System.out.printf("Player %s has been ELIMINATED from the game!%n",
                 player.getName());
         getPlayers().remove(player);
     }
@@ -224,7 +223,7 @@ public class WarGame extends Game {
         for (Player player : getPlayers()) {
             warPlayer = (WarPlayer) player;
             for (int c = 0; c < cardsPerPlayer; c++) {
-                warPlayer.pushToDeck(warDeck.getCards().remove(0));
+                warPlayer.getDeck().push(warDeck.getCards().remove(0));
             }
         }
 
@@ -364,13 +363,13 @@ public class WarGame extends Game {
      *
      * @param warPlayer WarPlayer to update stat for
      */
-    private void updatePlayerStats(WarPlayer warPlayer) {
-        if (warPlayer.hasCards()) {
-            profileContainer.getPlayerProfile(warPlayer.getName()).addWin();
-        } else {
-            profileContainer.getPlayerProfile(warPlayer.getName()).addLoss();
-        }
-    }
+   private void updatePlayerStats(WarPlayer warPlayer) {
+       if (warPlayer.hasCardsInHand()) {
+           profileContainer.getPlayerProfile(warPlayer.getName()).addWin();
+       } else {
+           profileContainer.getPlayerProfile(warPlayer.getName()).addLoss();
+       }
+   }
 
     /**
      * Player with the greatest number of cards within their deck is the winner
@@ -379,16 +378,16 @@ public class WarGame extends Game {
     @Override
     public void declareWinner() {
         // WarPlayer winner;
-        int maxValue = 0;
         String winner = null;
         int maxCards = 0;
 
+        WarPlayer activePlayer;
+
         for (int i = 0; i < getPlayers().size(); i++) {
             activePlayer = (WarPlayer) getPlayers().get(i);
-            if (activePlayer.getDeck().getSize() > maxValue) {
-                maxValue = activePlayer.getDeck().getSize();
-                winner = activePlayer.getName();
+            if (activePlayer.getDeck().getSize() > maxCards) {
                 maxCards = activePlayer.getDeck().getSize();
+                winner = activePlayer.getName();
             }
         }
 
