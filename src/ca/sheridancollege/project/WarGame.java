@@ -5,6 +5,7 @@
 package ca.sheridancollege.project;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -110,17 +111,19 @@ public class WarGame extends Game {
 
                 case PLAYING_MATCH:
                     // Round of War is printed
-                    System.out.printf(
-                        "%n==========%n#  PLAY  #%n==========%n"
-                        + "\t[1] Play Round%n"
-                        + "\t[2] Return to MAIN MENU%n> ");
+                    System.out.printf("%n==========%n#  PLAY  #%n==========%n");
+
+                    for (Player p : getPlayers()) {
+                        System.out.printf("\t%s has %d cards remaining%n",
+                            p.getName(), ((WarPlayer) p).getDeck().getSize());
+                    }
+                    System.out.printf("%n\t[1] Play Round%n\t[2] Return to MAIN MENU%n> ");
 
                     // End of round logic for user input
                     userInput = scan.next();
 
                     switch (userInput) {
                         case "1":
-                            pushToAllHands();
                             playRound();
                             pause(300);
                             break;
@@ -137,7 +140,6 @@ public class WarGame extends Game {
             }
 
         }
-
     }
 
     /**
@@ -241,117 +243,117 @@ public class WarGame extends Game {
         }
     }
 
-    /**
-     * Proceed to play a round of war and will loop if two players match cards
-     * until ultimate winner of round is declared
-     */
     private void playRound() {
-        GroupOfCards warPot = new GroupOfCards();
-        int maxValue = 0;  // Max value in a round of war between players
-        int tempValue = 0;  // Previous number (Used for winner logic)
-        int warValue = 0;  // Value that is matched between players
 
-        do {
-            // If War is declared between players, players with existing cards
-            // in hands will pick up another card
-            if (warValue > 0) {
-                System.out.printf("%n[WAR]%n"
-                        + "Players are going to war!%n");
-                for (int i = 0; i < getPlayerSize(); i++) {
-                    warValue = 0;  // Reset
-                    maxValue = 0;  // Reset
-                    activePlayer = (WarPlayer) getPlayers().get(i);
-                    if (activePlayer.hasCards() && activePlayer.getDeck().getSize() > 0) {
-                        activePlayer.pushToHand();
-                        System.out.printf("\nPlayer %s has %s of cards in deck "
-                                + "and puts down another card, %s.%n",
-                                activePlayer.getName(), activePlayer.getDeck().getSize(),
-                                activePlayer.getCurrentCard());
-                        // Push one card from deck to hand
-                    } else if (activePlayer.getDeck().getSize() == 0) {
-                        // Eliminate player if got to war and no more cards are left in deck
-                        eliminatePlayer(activePlayer);
+        // The leading value
+        int leadingValue;
+
+        // Track and display how many hands are played in a round.
+        int hand = 0;
+
+        // We store combatants, leaders, and losers.
+        // Combatants are the players still competeing in the round.
+        // Leaders are the players currently at war.
+        // Losers are the players that have been eliminated from the round.
+        // At the end of each hand, leaders continue to the next round and
+        // losers are removed.
+        ArrayList<WarPlayer> combatants = new ArrayList();
+        ArrayList<WarPlayer> leaders = new ArrayList();
+        ArrayList<WarPlayer> losers = new ArrayList();
+
+        // convert Players array to WarPlayer
+        for (Player p : getPlayers())
+            combatants.add((WarPlayer) p);
+
+        // Continue to loop until there is just one combatant remaining.
+        while (combatants.size() > 1) {
+            System.out.println("### HAND " + ++hand + " ###");
+
+            leadingValue = 0;
+
+            // We iterate over each combatant and get them to draw a Card.
+            // At this point, every combatant should be able to draw at least
+            // one.
+            for (WarPlayer turnPlayer : combatants) {
+                System.out.println("Turn: " + turnPlayer.getName());
+
+                // Check if Player can draw a card, if not they are eliminated
+                // from the round (and game later).
+                if (!turnPlayer.hasCardsInDeck()) {
+                    System.out.println("\tCannot draw anymore cards.\nEliminated!");
+                    losers.add(turnPlayer);
+                    continue;
+                }
+
+                // Draw a card
+                Card drawnCard = turnPlayer.flipCard();
+                int drawnCardValue = drawnCard.getValue();
+                System.out.printf(
+                    "\tDraws a %d of %s%n", drawnCardValue, drawnCard.getSuit());
+
+                // Player is the new leader if the card they drew has the new
+                // highest value.
+                if (drawnCardValue > leadingValue) {
+                    System.out.printf(
+                        "\t%sDraws high and is now in the lead!%n",
+                        turnPlayer.getName());
+
+                    if (leaders.size() > 0) {
+                        System.out.println(
+                            "ELIMINATED " + leaders + " from this round");
+
+                        losers.addAll(leaders);
+                        leaders.clear();
                     }
+
+                    // Make this combatant the sole leader
+                    leaders.add(turnPlayer);
+                    leadingValue = drawnCardValue;
+                }
+                // Player goes to war if the card they drew ties for the
+                // highest value.
+                else if (drawnCardValue == leadingValue) {
+                    System.out.printf("\t%s has gone to War!%n", turnPlayer.getName());
+                    leaders.add(turnPlayer);
+                }
+                // Player loses if the card they drew is less than the highest
+                // value card.
+                else {
+                    System.out.println(
+                        "\tDraws short and is ELIMINATED from this round.");
+
+                    losers.add(turnPlayer);
                 }
             }
 
-            // Logic for declaring a winner within a round of war
-            for (int i = 0; i < getPlayerSize(); i++) {
-                activePlayer = (WarPlayer) getPlayers().get(i);
-                if (activePlayer.getHandValue() > maxValue) {
-                    maxValue = activePlayer.getHandValue();
-                } else if (activePlayer.getHandValue() == tempValue
-                        || activePlayer.getHandValue() == maxValue) {
-                    warValue = activePlayer.getHandValue();
-                }
-                tempValue = activePlayer.getHandValue();
-            }
-
-            // Remove cards from hands of losers and put them into the pot (warPot)
-            for (int i = 0; i < getPlayers().size(); i++) {
-                activePlayer = (WarPlayer) getPlayers().get(i);
-                if (activePlayer.getHandValue() != maxValue) {
-                    int handSize = activePlayer.getHand().getCards().size();
-                    for (int j = 0; j < handSize; j++) {
-                        warPot.getCards().add(activePlayer.getHand().getCards().remove(0));
-                    }
-                }
-            }
-        } while (warValue > 0 && warValue >= maxValue);
-
-        // Winner collects cards from warPot
-        for (int i = 0; i < getPlayers().size(); i++) {
-            activePlayer = (WarPlayer) getPlayers().get(i);
-            updatePlayerStats(activePlayer);  // After a round stats are updated
-            if (activePlayer.hasCards()) {
-                System.out.printf("\n[Winner]%n"
-                        + "Player %s is declared the winner and takes the pot "
-                        + "of %s cards!%n",
-                        activePlayer.getName(), warPot.getSize());
-                //for each card in the pot do this
-                activePlayer.pushAllToHand(warPot.getCards());
-                activePlayer.pushHandToDeck();
-            }
-        }
-        // If any decks are empty by the end of round, player is eliminated
-        for (int i = 0; i < getPlayers().size(); i++) {
-            activePlayer = (WarPlayer) getPlayers().get(i);
-            if (activePlayer.getDeck().getCards().isEmpty()) {
-                eliminatePlayer(activePlayer);
-            }
-        }
-        // If one player is left in players array, they are declared a winner
-        if (getPlayers().size() == 1) {
-            declareWinner();
+            // Set the combatants array to only contain the continuing players
+            combatants = (ArrayList) leaders.clone();
+            leaders.clear();
         }
 
-    }
+        // At this point we should have only one winner inside the combatants array.
+        // First we document their victory and award them the losers cards
 
-    /**
-     * Before a round is started, players are told to pick up one card for the
-     * round
-     * Called at the start of a round
-     */
-    private void pushToAllHands() {
-        System.out.printf(
-            "%n[Round Start]%nPlayers %s ready? Place one card down!%n",
-            getPlayerNames());
+        WarPlayer winner = combatants.get(0);
+        updatePlayerStats(winner);
 
-        // Console prints players put down a card that is drawn (facedown)
-        for (int i = 0; i < getPlayerSize(); i++) {
-            activePlayer = (WarPlayer) getPlayers().get(i);
-
-            System.out.printf(
-                "\nPlayer %s has %s of cards in deck and puts down a, %s.%n",
-                activePlayer.getName(), 
-                activePlayer.getDeck().getSize(),
-                activePlayer.getCurrentCard()
-            );
-
-            // Push one card to hand from deck
-            // Printing the card that was used by player
-            activePlayer.pushToHand(); 
+        // We iterate over all the losers and give their cards to the winning
+        // player. If a losers is out of cards then they are eliminated.
+        for (WarPlayer loser : losers) {
+            winner.takeHand(loser);
+            updatePlayerStats(loser);
+            if (!loser.hasCardsInDeck())
+                eliminatePlayer(loser);
         }
+        winner.returnHandToDeck();
+        winner.shuffle();
+
+        System.out.printf("%n%s has WON the round!%nPress [ENTER] to continue", winner);
+
+        // Wait for user to press ENTER key before continueing
+        try {
+            System.in.read();
+        } catch (IOException e) { }
     }
 
     /**

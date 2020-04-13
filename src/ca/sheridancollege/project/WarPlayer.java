@@ -7,8 +7,8 @@ package ca.sheridancollege.project;
 import java.util.ArrayList;
 
 /**
- *
  * @author Marcin Koziel
+ * @modifier Sheldon Allen
  */
 public class WarPlayer extends Player {
 
@@ -19,8 +19,11 @@ public class WarPlayer extends Player {
         super(name);
     }
 
+    /**
+     * @return the Card most recently added to hand.
+     */
     public Card getCurrentCard() {
-        return deck.getCards().get(0);
+        return hand.getCards().get(hand.getSize() - 1);
     }
 
     public GroupOfCards getDeck() {
@@ -31,16 +34,26 @@ public class WarPlayer extends Player {
         return hand;
     }
 
+    /**
+     * @return the cumulative value of all the cards in WarPlayer's hand
+     */
     public int getHandValue() {
         int value = 0;
-        for (int i = 0; i < hand.getSize(); i++) {
-            value += hand.getCards().get(i).getValue();
-        }
+
+        for (Card c : hand.getCards())
+            value += c.getValue();
+
         return value;
     }
 
+    /**
+     * Moves one Card from the deck to the hand
+     * @return the card just added to hand.
+     */
     public Card flipCard() {
-        return hand.getCards().get(0);
+        Card c = deck.pop();
+        hand.push(c);
+        return c;
     }
 
     public boolean hasCards() {
@@ -48,36 +61,49 @@ public class WarPlayer extends Player {
             return true;
         }
         return false;
+    /**
+     * @return whether or not the WarPlayer has any cards in deck.
+     */
+    public boolean hasCardsInDeck() {
+        return deck.getSize() > 0;
     }
 
-    public void pushHandToDeck() {
-        while (hand.getSize() > 0) {
-            deck.getCards().add(hand.getCards().remove(0));
-        }
+    /**
+     * @return whether or not the WarPlayer has any cards in hand.
+     */
+    public boolean hasCardsInHand() {
+        return hand.getSize() > 0;
     }
 
     public void pushToDeck(Card card) {
         deck.getCards().add(card);
+    /**
+     * Moves all Cards in hand back to the deck.
+     */
+    public void returnHandToDeck() {
+        deck.getCards().addAll(hand.getCards());
+        hand.getCards().clear();
     }
 
-    public void pushAllToHand(ArrayList<Card> cards) {
-        int cardSize = cards.size();
-        for (int i = 0; i < cardSize; i++) {
-            hand.getCards().add(cards.remove(0));
-        }
-    }
-
-    public void pushToHand() {
-        hand.getCards().add(deck.getCards().remove(0));
+    /**
+     * Takes the cards from one players hand, adds it to their deck, and shuffles
+     * 
+     * @param otherPlayer is the player that this WarPlayer will take the cards of.
+     */
+    public void takeHand(WarPlayer otherPlayer) {
+        deck.getCards().addAll(otherPlayer.getHand().getCards());
+        otherPlayer.getHand().getCards().clear();
     }
 
     @Override
     public String toString() {
-        return String.format("%s has %s cards", getName(), getDeck().getSize());
+        return String.format("%s", getName());
     }
 
     @Override
-    public void play() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+    /**
+     * because of the nature of our game, there is no need to implement the
+     * WarPlayer.play() function.
+     */
+    public void play() { }
 }
