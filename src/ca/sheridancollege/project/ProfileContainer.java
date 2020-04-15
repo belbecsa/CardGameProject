@@ -16,7 +16,7 @@ public class ProfileContainer {
     private ArrayList<PlayerProfile> playerProfiles = new ArrayList<>();
 
     public PlayerProfile createPlayerProfile(String name) {
-        PlayerProfile player = new PlayerProfile(name);
+        PlayerProfile player = new PlayerProfile(name.trim());
         playerProfiles.add(player);
         return player;
     }
