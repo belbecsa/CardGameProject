@@ -16,6 +16,7 @@ import java.util.Scanner;
  *
  * @author Marcin Koziel
  * @modifier Sheldon Allen
+ * @modifier Sam Belbeck
  */
 public class WarGame extends Game {
 
@@ -380,21 +381,42 @@ public class WarGame extends Game {
         // WarPlayer winner;
         String winner = null;
         int maxCards = 0;
+        ArrayList<String> tiedPlayers = null;
 
         WarPlayer activePlayer;
 
         for (int i = 0; i < getPlayers().size(); i++) {
-            activePlayer = (WarPlayer) getPlayers().get(i);
+            activePlayer = (WarPlayer) getPlayers().get(i);            
             if (activePlayer.getDeck().getSize() > maxCards) {
                 maxCards = activePlayer.getDeck().getSize();
                 winner = activePlayer.getName();
-            }
+            }           
         }
-
+        for (int j = 0; j < getPlayers().size(); j++){
+                activePlayer = (WarPlayer) getPlayers().get(j);
+                if(maxCards == activePlayer.getDeck().getSize() 
+                        && (!activePlayer.getName().equals(winner))){
+                    if (tiedPlayers == null) {
+                        tiedPlayers = new ArrayList<>();
+                        tiedPlayers.add(winner);
+                    }                 
+                    tiedPlayers.add(activePlayer.getName());
+                }                
+        }
+        if (tiedPlayers == null) {
         System.out.printf("[Winner]"
                 + "Player %s is the winner with a total of %s cards!%n",
                 winner, maxCards);
         System.exit(0);
+        } else {
+            System.out.print("[Tie]");
+            for (int i = 0; i < tiedPlayers.size(); i++) {
+                System.out.print(tiedPlayers.get(i)+ ", ");            
+            }         
+            System.out.printf("have tied with a total of %s cards each!%n",
+                maxCards);
+                System.exit(0);
+        }
 
     }
 

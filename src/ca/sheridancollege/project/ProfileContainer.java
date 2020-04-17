@@ -10,6 +10,7 @@ import java.util.ArrayList;
  *
  * @author Marcin Koziel
  * @modifier Sheldon Allen
+ * @modifier Sam Belbeck
  */
 public class ProfileContainer {
 
